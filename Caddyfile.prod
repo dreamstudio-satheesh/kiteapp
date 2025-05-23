@@ -20,3 +20,10 @@ kite.servcp.com {
 
     tls you@your-email.com
 }
+
+http://trade.app {
+    encode gzip
+
+    # Single catch‐all proxy
+    reverse_proxy backend:8000
+}

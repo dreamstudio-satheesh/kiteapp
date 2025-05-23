@@ -92,6 +92,14 @@ services:
     ports:
       - "8080:80"
 
+  frontend:
+    container_name: frontend
+    build: ./react
+    networks:
+      - web
+    depends_on:
+      - backend
+
 volumes:
   mysql-data:
   caddy_data:
