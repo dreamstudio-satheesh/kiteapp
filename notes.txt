@@ -1,3 +1,3 @@
 git remote add server git@91.99.75.171:/home/git/kiteapp.git
 
-app
+app git
