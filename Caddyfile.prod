@@ -1,0 +1,22 @@
+kite.servcp.com {
+    encode gzip
+
+    # API backend
+    reverse_proxy /api/* backend:8000
+
+    # WebSocket
+    reverse_proxy /ws/* backend:8000 {
+        header_up Connection {>Connection}
+        header_up Upgrade    {>Upgrade}
+    }
+
+    # Health & Swagger
+    reverse_proxy /health backend:8000
+    reverse_proxy /docs/* backend:8000
+
+    # React frontend
+    root * /usr/share/caddy
+    file_server
+
+    tls you@your-email.com
+}

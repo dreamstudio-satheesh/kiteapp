@@ -1,0 +1,102 @@
+services:
+  caddy:
+    container_name: caddy
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - backend
+    networks:
+      - web
+
+  backend:
+    container_name: backend
+    build: ./backend
+    env_file: .env
+    networks:
+      - web
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+
+  ticker:
+    container_name: ticker
+    build: ./ticker
+    env_file: .env
+    depends_on:
+      - backend
+      - redis
+    restart: always
+    networks:
+      - web
+
+  sync_positions:
+    container_name: sync_positions
+    build: ./sync_positions
+    env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis       
+    restart: always
+    networks:
+      - web
+
+  monitor_orders:
+    container_name: monitor_orders
+    build: ./monitor_orders
+    env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis
+    restart: always
+    networks:
+      - web
+
+  mysql:
+    container_name: mysql
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: kiteadmin
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - web
+
+  redis:
+    container_name: redis
+    image: redis:7-alpine
+    networks:
+      - web
+  
+  phpmyadmin:
+    image: phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_USER: root
+      PMA_PASSWORD: password
+    networks:
+      - web
+    ports:
+      - "8080:80"
+
+volumes:
+  mysql-data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  web:
+    driver: bridge

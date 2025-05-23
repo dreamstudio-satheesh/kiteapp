@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+PyJWT
+passlib[bcrypt]
+mysql-connector-python
+redis
+python-dotenv
+python-multipart
+kiteconnect
+pandas
+requests

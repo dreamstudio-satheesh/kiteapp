@@ -1,0 +1,5 @@
+{
+  "name": "Zerodha Admin Panel",
+  "description": "A React-based admin panel for managing Zerodha trading operations, accounts, settings, orders, and viewing real-time market data.",
+  "requestFramePermissions": []
+}
