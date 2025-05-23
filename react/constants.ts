@@ -1,7 +1,12 @@
 
 // API Configuration
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000'; // Default if not set
-export const WEBSOCKET_HOST = process.env.REACT_APP_WEBSOCKET_HOST || 'localhost:8000'; // Default if not set
+// export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000'; // Default if not set
+// export const WEBSOCKET_HOST = process.env.REACT_APP_WEBSOCKET_HOST || 'localhost:8000'; // Default if not set
+
+// API Configuration
+export const API_BASE_URL = import.meta.env.VITE_API_URL || 'https://api.servcp.com';
+export const WEBSOCKET_HOST = import.meta.env.VITE_WEBSOCKET_HOST || 'wss://api.servcp.com/ws';
+
 
 // API Endpoints
 export const API_ENDPOINTS = {
