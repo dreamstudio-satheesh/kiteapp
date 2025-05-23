@@ -1,23 +1,24 @@
+# Frontend (React)
 kite.servcp.com {
     encode gzip
 
-    # API backend
-    reverse_proxy /api/* backend:8000
-
-    # WebSocket
-    reverse_proxy /ws/* backend:8000 {
-        header_up Connection {>Connection}
-        header_up Upgrade    {>Upgrade}
-    }
-
-    # Health & Swagger
-    reverse_proxy /health backend:8000
-    reverse_proxy /docs/* backend:8000
-
-    # React frontend
     root * /usr/share/caddy
     file_server
+    try_files {path} /index.html
 
     tls you@your-email.com
 }
 
+# Backend (FastAPI)
+api.servcp.com {
+    encode gzip
+
+    reverse_proxy backend:8000 {
+        header_up Host {host}
+        header_up X-Real-IP {remote}
+        header_up X-Forwarded-For {remote}
+        header_up X-Forwarded-Proto {scheme}
+    }
+
+    tls you@your-email.com
+}
