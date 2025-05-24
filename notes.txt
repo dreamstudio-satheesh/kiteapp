@@ -8,6 +8,7 @@ post-receive:
   GIT_WORK_TREE=/srv/kiteapp git checkout -f
   docker stack deploy -c /srv/kiteapp/docker-compose.yml kiteapp
 
+//kiteapp
 
 10.1.0.2   web-node
 10.1.0.3   app-node
