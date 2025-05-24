@@ -1,3 +1,14 @@
 git remote add server git@91.99.75.171:/home/git/kiteapp.git
 
-app gits
+
+
+
+git clone --bare /srv/kiteapp.git
+post-receive:
+  GIT_WORK_TREE=/srv/kiteapp git checkout -f
+  docker stack deploy -c /srv/kiteapp/docker-compose.yml kiteapp
+
+
+10.1.0.2   web-node
+10.1.0.3   app-node
+10.1.0.4   db-node
