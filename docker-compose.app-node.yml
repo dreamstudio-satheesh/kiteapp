@@ -1,0 +1,50 @@
+services:
+  backend:
+    container_name: backend
+    build: ./backend
+    env_file: .env
+    networks:
+      - web
+    ports:
+      - "8000:8000"
+    expose:
+      - "8000"
+
+  ticker:
+    container_name: ticker
+    build: ./ticker
+    env_file: .env
+    depends_on:
+      - backend
+      - redis
+    restart: always
+    networks:
+      - web
+
+  sync_positions:
+    container_name: sync_positions
+    build: ./sync_positions
+    env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis       
+    restart: always
+    networks:
+      - web
+
+  monitor_orders:
+    container_name: monitor_orders
+    build: ./monitor_orders
+    env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis
+    restart: always
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge

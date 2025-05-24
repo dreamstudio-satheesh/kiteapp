@@ -1,0 +1,59 @@
+#!/bin/bash
+set -e
+
+WORK_TREE=/home/git/kiteapp
+GIT_DIR=/home/git/kiteapp.git
+
+if [ ! -d "$WORK_TREE" ]; then
+  mkdir -p "$WORK_TREE"
+  chown git:git "$WORK_TREE"
+fi
+
+GIT_WORK_TREE="$WORK_TREE" GIT_DIR="$GIT_DIR" git checkout -f master
+cd "$WORK_TREE"
+
+docker compose -f docker-compose.web-node.yml down --volumes --remove-orphans
+docker system prune -af --volumes
+docker compose -f docker-compose.web-node.yml up -d --build
+
+
+
+
+#!/bin/bash
+set -e
+
+WORK_TREE=/home/git/kiteapp
+GIT_DIR=/home/git/kiteapp.git
+
+if [ ! -d "$WORK_TREE" ]; then
+  mkdir -p "$WORK_TREE"
+  chown git:git "$WORK_TREE"
+fi
+
+GIT_WORK_TREE="$WORK_TREE" GIT_DIR="$GIT_DIR" git checkout -f master
+cd "$WORK_TREE"
+
+docker compose -f docker-compose.app-node.yml down --volumes --remove-orphans
+docker system prune -af --volumes
+docker compose -f docker-compose.app-node.yml up -d --build
+
+
+
+
+#!/bin/bash
+set -e
+
+WORK_TREE=/home/git/kiteapp
+GIT_DIR=/home/git/kiteapp.git
+
+if [ ! -d "$WORK_TREE" ]; then
+  mkdir -p "$WORK_TREE"
+  chown git:git "$WORK_TREE"
+fi
+
+GIT_WORK_TREE="$WORK_TREE" GIT_DIR="$GIT_DIR" git checkout -f master
+cd "$WORK_TREE"
+
+docker compose -f docker-compose.db-node.yml down --volumes --remove-orphans
+docker system prune -af --volumes
+docker compose -f docker-compose.db-node.yml up -d --build

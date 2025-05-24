@@ -20,16 +20,8 @@ docker compose build
 docker images
 
 
-
-docker tag backend       kiteapp_backend:latest
-docker tag ticker        kiteapp_ticker:latest
-docker tag sync_positions kiteapp_sync_positions:latest
-docker tag monitor_orders kiteapp_monitor_orders:latest
-docker tag frontend      kiteapp_frontend:latest
-
-docker stack deploy -c docker-compose.yml kiteapp
+docker compose -f docker-compose.app-node.yml up -d --build
 
 
-docker stack ps kiteapp
-docker stack services kiteapp
-docker node ls
+docker compose down --volumes --remove-orphans
+docker system prune -af --volumes

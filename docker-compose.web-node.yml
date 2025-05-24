@@ -1,0 +1,32 @@
+services:
+  caddy:
+    container_name: caddy
+    image: caddy:2
+    restart: always
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - web
+    depends_on:
+      - backend
+
+  frontend:
+    container_name: frontend
+    build: ./react
+    networks:
+      - web
+    depends_on:
+      - backend
+
+networks:
+  web:
+    driver: bridge
+
+volumes:
+  caddy_data:
+  caddy_config:

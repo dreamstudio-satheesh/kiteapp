@@ -1,8 +1,8 @@
-version: "3.8"
-
 services:
   caddy:
+    container_name: caddy
     image: caddy:2
+    restart: always
     ports:
       - "80:80"
       - "443:443"
@@ -10,59 +10,59 @@ services:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy_data:/data
       - caddy_config:/config
+    depends_on:
+      - backend
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == web-node]
-
-  frontend:
-    image: kiteapp-frontend:latest
-    networks:
-      - web
-    deploy:
-      placement:
-        constraints: [node.hostname == web-node]
 
   backend:
-    image: kiteapp-backend:latest
+    container_name: backend
+    build: ./backend
     env_file: .env
+    networks:
+      - web
     ports:
       - "8000:8000"
-    networks:
-      - web
-    deploy:
-      placement:
-        constraints: [node.hostname == app-node]
+    expose:
+      - "8000"
 
   ticker:
-    image: kiteapp-ticker:latest
+    container_name: ticker
+    build: ./ticker
     env_file: .env
+    depends_on:
+      - backend
+      - redis
+    restart: always
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == app-node]
 
   sync_positions:
-    image: kiteapp-sync_positions:latest
+    container_name: sync_positions
+    build: ./sync_positions
     env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis       
+    restart: always
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == app-node]
 
   monitor_orders:
-    image: kiteapp-monitor_orders:latest
+    container_name: monitor_orders
+    build: ./monitor_orders
     env_file: .env
+    depends_on:
+      - backend
+      - mysql
+      - redis
+    restart: always
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == app-node]
 
   mysql:
+    container_name: mysql
     image: mysql:8.0
     environment:
       MYSQL_ROOT_PASSWORD: password
@@ -72,32 +72,33 @@ services:
       - ./mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == db-node]
 
   redis:
+    container_name: redis
     image: redis:7-alpine
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == db-node]
-
+  
   phpmyadmin:
     image: phpmyadmin
+    container_name: phpmyadmin
     environment:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_USER: root
       PMA_PASSWORD: password
-    ports:
-      - "8080:80"
     networks:
       - web
-    deploy:
-      placement:
-        constraints: [node.hostname == db-node]
+    ports:
+      - "8080:80"
+
+  frontend:
+    container_name: frontend
+    build: ./react
+    networks:
+      - web
+    depends_on:
+      - backend
 
 volumes:
   mysql-data:
@@ -106,4 +107,4 @@ volumes:
 
 networks:
   web:
-    driver: overlay
+    driver: bridge
