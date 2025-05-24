@@ -17,7 +17,7 @@ services:
         constraints: [node.hostname == web-node]
 
   frontend:
-    image: kiteapp-frontend:latest
+    build: ./react
     networks:
       - web
     deploy:
@@ -25,18 +25,18 @@ services:
         constraints: [node.hostname == web-node]
 
   backend:
-    image: kiteapp-backend:latest
+    build: ./backend
     env_file: .env
-    ports:
-      - "8000:8000"
     networks:
       - web
+    ports:
+      - "8000:8000"
     deploy:
       placement:
         constraints: [node.hostname == app-node]
 
   ticker:
-    image: kiteapp-ticker:latest
+    build: ./ticker
     env_file: .env
     networks:
       - web
@@ -45,7 +45,7 @@ services:
         constraints: [node.hostname == app-node]
 
   sync_positions:
-    image: kiteapp-sync_positions:latest
+    build: ./sync_positions
     env_file: .env
     networks:
       - web
@@ -54,7 +54,7 @@ services:
         constraints: [node.hostname == app-node]
 
   monitor_orders:
-    image: kiteapp-monitor_orders:latest
+    build: ./monitor_orders
     env_file: .env
     networks:
       - web
