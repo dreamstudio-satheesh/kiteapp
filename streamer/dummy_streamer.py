@@ -9,7 +9,7 @@ REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
 
 r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
-# Define realistic base prices (in rupees)
+# Define initial base prices (in rupees)
 base_prices = {
     408065: {"symbol": "INFY", "price": 1580.0},
     884737: {"symbol": "TATAMOTORS", "price": 960.0},
@@ -25,8 +25,8 @@ base_prices = {
 }
 
 def simulate_price(price):
-    # Simulate small fluctuation in price (±1%)
-    change_percent = random.uniform(-0.01, 0.01)
+    # Simulate realistic price movement up to ±2.5%
+    change_percent = random.uniform(-0.025, 0.025)
     return round(price * (1 + change_percent), 2)
 
 def run():
@@ -48,9 +48,9 @@ def run():
                 "volume": random.randint(10000, 50000),
                 "buy_qty": random.randint(500, 2000),
                 "sell_qty": random.randint(500, 2000),
-                "open": round(prev_price * 0.98, 2),
-                "high": max(new_price, prev_price) + random.uniform(0.5, 1.5),
-                "low": min(new_price, prev_price) - random.uniform(0.5, 1.5),
+                "open": round(prev_price * 0.985, 2),
+                "high": round(max(new_price, prev_price) * 1.005, 2),
+                "low": round(min(new_price, prev_price) * 0.995, 2),
                 "close": round(prev_price, 2),
                 "last_trade_time": now - 2,
                 "oi": random.randint(500, 2000),
