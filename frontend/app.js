@@ -1,5 +1,5 @@
 
-  const interval = 2000;
+  const interval = 1000;
   const apiUrl = "http://138.199.213.241:8000/quote";
 
   function fetchQuotes() {
