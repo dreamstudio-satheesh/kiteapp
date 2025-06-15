@@ -9,11 +9,11 @@ do
     if [ "$ref" = "$BRANCH" ]; then
         echo "Deploying Docker stack..."
 
-        if [ ! -d "$APP_DIR/.git" ]; then
-            git clone "$GIT_DIR" "$APP_DIR"
-        else
-            git --work-tree="$APP_DIR" --git-dir="$GIT_DIR" pull origin master
-        fi
+        # Ensure working dir exists
+        mkdir -p "$APP_DIR"
+
+        # Clean copy: no .git folder
+        git --work-tree="$APP_DIR" --git-dir="$GIT_DIR" checkout -f master
 
         cd "$APP_DIR" || exit
 
@@ -24,7 +24,7 @@ do
         echo "Deployment complete."
     fi
 done
-
+# Ensure the script is executable
 
 
 
