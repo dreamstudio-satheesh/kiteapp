@@ -34,18 +34,18 @@ services:
       - redis
 
 
-  spike-watcher:
-    build: ./spike
-    container_name: spike-watcher
-    volumes:
-      - ./spike:/app
-    working_dir: /app
-    command: python watcher.py
-    environment:
-      - REDIS_HOST=redis
-      - DB_HOST=db
-    depends_on:
-      - redis
+  # spike-watcher:
+  #   build: ./spike
+  #   container_name: spike-watcher
+  #   volumes:
+  #     - ./spike:/app
+  #   working_dir: /app
+  #   command: python watcher.py
+  #   environment:
+  #     - REDIS_HOST=redis
+  #     - DB_HOST=db
+  #   depends_on:
+  #     - redis
 
   api-server:
     build: ./backend
