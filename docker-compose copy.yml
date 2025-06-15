@@ -1,0 +1,69 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  dummy-streamer:
+    build:
+      context: ./streamer
+      dockerfile: Dockerfile.dummy
+    container_name: dummy-streamer
+    volumes:
+      - ./streamer:/app
+    working_dir: /app
+    command: python dummy_streamer.py
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  api-server:
+    build: ./backend
+    container_name: api-server
+    volumes:
+      - ./backend:/app
+    working_dir: /app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000
+    expose:
+      - "8000"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-server
+
+  caddy:
+    image: caddy:alpine
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - api-server
+    networks:
+      - web
+
+networks:
+  default:
+    driver: bridge
+  web:
+    external: false
+
+volumes:
+  caddy_data:
+  caddy_config:
