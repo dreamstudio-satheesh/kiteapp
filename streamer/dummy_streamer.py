@@ -4,39 +4,39 @@ import struct
 import time
 import json
 import random
-from datetime import datetime
+import os
 
-r = redis.Redis(host="localhost", port=6379, decode_responses=True)
+REDIS_HOST = os.getenv("REDIS_HOST", "redis")
+REDIS_PORT = int(os.getenv("REDIS_PORT", 6379))
+
+r = redis.Redis(host=REDIS_HOST, port=REDIS_PORT, decode_responses=True)
 
 def generate_quote_packet(token: int) -> bytes:
     now = int(time.time())
-    base_price = random.randint(10000, 15000)  # in paise (e.g. 150.00)
+    base_price = random.randint(10000, 15000)
 
-    # Quote fields (17 x int32)
     fields = [
         token,
-        base_price,                   # LTP
-        random.randint(1, 100),       # Last Qty
-        base_price - 50,              # Avg price
-        random.randint(1000, 10000),  # Volume
-        random.randint(100, 500),     # Buy qty
-        random.randint(100, 500),     # Sell qty
-        base_price - 200,             # Open
-        base_price + 100,             # High
-        base_price - 300,             # Low
-        base_price - 100,             # Close
-        now - 2,                      # Last trade time
-        random.randint(100, 1000),    # OI
-        random.randint(100, 1000),    # OI High
-        random.randint(100, 1000),    # OI Low
-        now,                          # Exchange time
-        now                           # ✅ This is the missing 17th field
+        base_price,
+        random.randint(1, 100),
+        base_price - 50,
+        random.randint(1000, 10000),
+        random.randint(100, 500),
+        random.randint(100, 500),
+        base_price - 200,
+        base_price + 100,
+        base_price - 300,
+        base_price - 100,
+        now - 2,
+        random.randint(100, 1000),
+        random.randint(100, 1000),
+        random.randint(100, 1000),
+        now,
+        now
     ]
-
 
     packet = struct.pack("!17i", *fields)
 
-    # Add dummy market depth (10 entries x 12 bytes = 120 bytes)
     for i in range(10):
         qty = random.randint(1, 50)
         price = base_price + random.randint(-100, 100)
@@ -58,7 +58,6 @@ def run():
             tick = {
                 "instrument_token": token,
                 "last_price": struct.unpack("!i", packet[4:8])[0] / 100,
-                "_raw_packet": packet.hex(),  # Optional for debugging
                 "timestamp": time.time()
             }
             r.set(f"tick:{symbol}", json.dumps(tick))

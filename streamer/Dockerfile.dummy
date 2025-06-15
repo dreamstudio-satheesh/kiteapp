@@ -7,5 +7,5 @@ COPY requirements.txt ./
 
 RUN pip install --no-cache-dir -r requirements.txt
 
-CMD ["python", "ticker.py"]
+CMD ["python", "dummy_streamer.py"]
 # Expose the port if needed
