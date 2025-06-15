@@ -1,0 +1,26 @@
+#!/bin/bash
+
+APP_DIR="/home/kiteapp"
+GIT_DIR="/home/kiteapp.git"
+BRANCH="refs/heads/master"
+
+while read oldrev newrev ref
+do
+    if [ "$ref" = "$BRANCH" ]; then
+        echo "Deploying Docker stack..."
+
+        if [ ! -d "$APP_DIR/.git" ]; then
+            git clone "$GIT_DIR" "$APP_DIR"
+        else
+            git --work-tree="$APP_DIR" --git-dir="$GIT_DIR" pull origin master
+        fi
+
+        cd "$APP_DIR" || exit
+
+        echo "Rebuilding and starting containers..."
+        docker compose -f docker-compose.yml down
+        docker compose -f docker-compose.yml up -d --build
+
+        echo "Deployment complete."
+    fi
+done
