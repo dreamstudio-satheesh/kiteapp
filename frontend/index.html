@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Live Stock Quotes</title>
+  <style>
+    body { font-family: sans-serif; padding: 1rem; }
+    h2 { margin-bottom: 1rem; }
+    .quote { margin: 0.3rem 0; font-size: 1rem; }
+  </style>
+</head>
+<body>
+  <h2>Live Stock LTPs</h2>
+  <div id="quotes"></div>
+
+  <script>
+    const interval = 2000; // 2 seconds
+    const apiUrl = "http://localhost:8000/quote";
+
+    function fetchQuotes() {
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => {
+          const box = document.getElementById("quotes");
+          box.innerHTML = "";
+          for (const [symbol, info] of Object.entries(data)) {
+            const line = document.createElement("div");
+            line.className = "quote";
+            line.textContent = `${symbol}: ₹${info.ltp}`;
+            box.appendChild(line);
+          }
+        });
+    }
+
+    setInterval(fetchQuotes, interval);
+    fetchQuotes();
+  </script>
+</body>
+</html>

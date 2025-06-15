@@ -1,0 +1,45 @@
+services:
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+
+  ticker-streamer:
+    build: ./streamer
+    container_name: ticker-streamer
+    environment:
+      - KITE_API_KEY=${KITE_API_KEY}
+      - KITE_ACCESS_TOKEN=${KITE_ACCESS_TOKEN}
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  spike-watcher:
+    build: ./spike
+    container_name: spike-watcher
+    environment:
+      - REDIS_HOST=redis
+      - DB_HOST=db
+    depends_on:
+      - redis
+
+  api-server:
+    build: ./backend
+    container_name: api-server
+    ports:
+      - "8000:8000"
+    environment:
+      - REDIS_HOST=redis
+    depends_on:
+      - redis
+
+  frontend:
+    image: nginx:alpine
+    container_name: frontend
+    volumes:
+      - ./frontend:/usr/share/nginx/html:ro
+    ports:
+      - "8080:80"
+    depends_on:
+      - api-server
