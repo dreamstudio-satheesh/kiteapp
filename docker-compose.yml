@@ -11,7 +11,7 @@ services:
     volumes:
       - ./streamer:/app
     working_dir: /app
-    command: python ticker.py
+    command: python dummy_streamer.py
     environment:
       - KITE_API_KEY=${KITE_API_KEY}
       - KITE_ACCESS_TOKEN=${KITE_ACCESS_TOKEN}
