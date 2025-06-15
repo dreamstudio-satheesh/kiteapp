@@ -13,7 +13,7 @@ def generate_quote_packet(token: int) -> bytes:
     base_price = random.randint(10000, 15000)  # in paise (e.g. 150.00)
 
     # Quote fields (17 x int32)
-        fields = [
+    fields = [
         token,
         base_price,                   # LTP
         random.randint(1, 100),       # Last Qty
