@@ -13,7 +13,7 @@ def generate_quote_packet(token: int) -> bytes:
     base_price = random.randint(10000, 15000)  # in paise (e.g. 150.00)
 
     # Quote fields (17 x int32)
-    fields = [
+        fields = [
         token,
         base_price,                   # LTP
         random.randint(1, 100),       # Last Qty
@@ -29,8 +29,10 @@ def generate_quote_packet(token: int) -> bytes:
         random.randint(100, 1000),    # OI
         random.randint(100, 1000),    # OI High
         random.randint(100, 1000),    # OI Low
-        now                           # Exchange time
+        now,                          # Exchange time
+        now                           # ✅ This is the missing 17th field
     ]
+
 
     packet = struct.pack("!17i", *fields)
 
