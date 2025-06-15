@@ -8,10 +8,6 @@ services:
   ticker-streamer:
     build: ./streamer
     container_name: ticker-streamer
-    volumes:
-      - ./streamer:/app
-    working_dir: /app
-    command: uvicorn main:app --reload --host 0.0.0.0 --port 8001
     environment:
       - KITE_API_KEY=${KITE_API_KEY}
       - KITE_ACCESS_TOKEN=${KITE_ACCESS_TOKEN}
@@ -22,10 +18,6 @@ services:
   spike-watcher:
     build: ./spike
     container_name: spike-watcher
-    volumes:
-      - ./spike:/app
-    working_dir: /app
-    command: python main.py
     environment:
       - REDIS_HOST=redis
       - DB_HOST=db
@@ -35,10 +27,6 @@ services:
   api-server:
     build: ./backend
     container_name: api-server
-    volumes:
-      - ./backend:/app
-    working_dir: /app
-    command: uvicorn main:app --reload --host 0.0.0.0 --port 8000
     ports:
       - "8000:8000"
     environment:

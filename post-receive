@@ -7,23 +7,19 @@ BRANCH="refs/heads/master"
 while read oldrev newrev ref
 do
     if [ "$ref" = "$BRANCH" ]; then
-        echo "Deploying Docker stack..."
+        echo "Deploying (volume-based)..."
 
-        # Ensure working dir exists
         mkdir -p "$APP_DIR"
-
-        # Clean copy: no .git folder
         git --work-tree="$APP_DIR" --git-dir="$GIT_DIR" checkout -f master
 
         cd "$APP_DIR" || exit
+        docker compose down
+        docker compose up -d  # no build
 
-        echo "Rebuilding and starting containers..."
-        docker compose -f docker-compose.yml down
-        docker compose -f docker-compose.yml up -d --build
-
-        echo "Deployment complete."
+        echo "Deployment complete (no rebuild)."
     fi
 done
+
 # Ensure the script is executable
 
 
