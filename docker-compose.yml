@@ -21,11 +21,11 @@ services:
 
   dummy-streamer:
     build:
-      context: ./dummy
+      context: ./streamer
       dockerfile: Dockerfile.dummy
     container_name: dummy-streamer
     volumes:
-      - ./dummy:/app
+      - ./streamer:/app
     working_dir: /app
     command: python dummy_streamer.py
     environment:
